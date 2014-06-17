@@ -187,8 +187,9 @@ def temp_dir():
 
 @contextlib.contextmanager
 def repo_context(url, branch=None, quiet=True):
+    exe = 'git' if 'git' in url else 'hg'
     with temp_dir() as repo_dir:
-        cmd = ['hg', 'clone', url, repo_dir]
+        cmd = [exe, 'clone', url, repo_dir]
         if branch:
             cmd.extend(['--branch', branch])
         devnull = open(os.path.devnull, 'w')
