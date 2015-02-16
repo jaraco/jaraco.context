@@ -1,0 +1,4 @@
+1.2
+===
+
+* Adopted functionality from jaraco.util.context (10.8).
