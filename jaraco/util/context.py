@@ -31,7 +31,12 @@ class ExceptionTrap(object):
 	Traceback (most recent call last):
 	...
 	Exception
+
+	>>> bool(trap)
+	False
 	"""
+	exc_info = None, None, None
+
 	def __init__(self, exceptions=(Exception,)):
 		self.exceptions = exceptions
 
@@ -39,8 +44,10 @@ class ExceptionTrap(object):
 		return self
 
 	def __exit__(self, exc_type, exc_val, traceback):
-		self.exc_info = exc_type, exc_val, traceback
-		return exc_type and issubclass(exc_type, self.exceptions)
+		matches = exc_type and issubclass(exc_type, self.exceptions)
+		if matches:
+			self.exc_info = exc_type, exc_val, traceback
+		return matches
 
 	def __bool__(self):
 		return bool(self.exc_info[0])
