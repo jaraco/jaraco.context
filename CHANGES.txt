@@ -1,3 +1,8 @@
+1.5
+===
+
+* Also allow the ``dest_ctx`` to be overridden in ``repo_context``.
+
 1.4
 ===
 
