@@ -177,13 +177,19 @@ def infer_compression(url):
 	# Assume 'z' (gzip) if no match
 	return mapping.get(compression_indicator, 'z')
 
+
 @contextlib.contextmanager
-def temp_dir():
+def temp_dir(remover=shutil.rmtree):
+	"""
+	Create a temporary directory context. Pass a custom remover
+	to override the removal behavior.
+	"""
 	temp_dir = tempfile.mkdtemp()
 	try:
 		yield temp_dir
 	finally:
-		shutil.rmtree(temp_dir, ignore_errors=True)
+		remover(temp_dir)
+
 
 @contextlib.contextmanager
 def repo_context(url, branch=None, quiet=True):
