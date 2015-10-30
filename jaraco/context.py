@@ -183,7 +183,7 @@ def temp_dir():
     try:
         yield temp_dir
     finally:
-        shutil.rmtree(temp_dir)
+        shutil.rmtree(temp_dir, ignore_errors=True)
 
 @contextlib.contextmanager
 def repo_context(url, branch=None, quiet=True):
