@@ -1,2 +1,2 @@
-skeleton
-========
+jaraco.context
+==============
