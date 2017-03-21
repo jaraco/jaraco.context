@@ -1,3 +1,8 @@
+1.6
+===
+
+* Refresh project skeleton. Moved hosting to Github.
+
 1.5
 ===
 
