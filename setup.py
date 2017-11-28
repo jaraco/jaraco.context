@@ -11,6 +11,11 @@ with io.open('README.rst', encoding='utf-8') as readme:
 
 name = 'jaraco.context'
 description = ''
+nspkg_technique = 'managed'
+"""
+Does this package use "native" namespace packages or
+pkg_resources "managed" namespace packages?
+"""
 
 py33_markers = [
 	'python_version=="{ver}"'.format(**locals())
@@ -28,13 +33,26 @@ params = dict(
 	url="https://github.com/jaraco/" + name,
 	packages=setuptools.find_packages(),
 	include_package_data=True,
-	namespace_packages=name.split('.')[:-1],
+	namespace_packages=(
+		name.split('.')[:-1] if nspkg_technique == 'managed'
+		else []
+	),
 	python_requires='>=2.7',
 	install_requires=[
 		'jaraco.apt',
 		'yg.lockfile',
 	],
 	extras_require={
+		'testing': [
+			'pytest>=2.8',
+			'pytest-sugar',
+			'collective.checkdocs',
+		],
+		'docs': [
+			'sphinx',
+			'jaraco.packaging>=3.2',
+			'rst.linker>=1.9',
+		],
 		py33: [
 			'contextlib2',
 		],
