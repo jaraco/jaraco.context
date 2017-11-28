@@ -8,6 +8,11 @@ import functools
 import tempfile
 import shutil
 
+try:
+	import contextlib2
+except Exception:
+	import contextlib as contextlib2
+
 import jaraco.apt
 import yg.lockfile
 
@@ -278,3 +283,14 @@ class ExceptionTrap(object):
 	def __bool__(self):
 		return bool(self.exc_info[0])
 	__nonzero__ = __bool__
+
+
+class suppress(contextlib2.suppress, contextlib2.ContextDecorator):
+	"""
+	A version of contextlib.suppress with decorator support.
+
+	>>> @suppress(KeyError)
+	... def key_error():
+	...     {}['']
+	>>> key_error()
+	"""

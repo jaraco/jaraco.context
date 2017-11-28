@@ -12,6 +12,12 @@ with io.open('README.rst', encoding='utf-8') as readme:
 name = 'jaraco.context'
 description = ''
 
+py33_markers = [
+	'python_version=="{ver}"'.format(**locals())
+	for ver in ('3.3', '3.2', '2.7')
+]
+py33 = ':' + ' or '.join(py33_markers)
+
 params = dict(
 	name=name,
 	use_scm_version=True,
@@ -29,6 +35,9 @@ params = dict(
 		'yg.lockfile',
 	],
 	extras_require={
+		py33: [
+			'contextlib2',
+		],
 	},
 	setup_requires=[
 		'setuptools_scm>=1.15.0',

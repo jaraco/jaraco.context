@@ -1,3 +1,11 @@
+1.7
+===
+
+* Added ``suppress`` context manager as `found in Python
+  3.4
+  <https://docs.python.org/3/library/contextlib.html#contextlib.suppress>`_
+  but with decorator support.
+
 1.6
 ===
 
