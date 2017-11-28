@@ -26,6 +26,7 @@ def file_lines_if_exists(filename):
 		return []
 	return list(open(filename))
 
+
 def strip_comments(lines):
 	"""
 	Returns the lines from a list of a lines with comments and trailing
@@ -44,46 +45,57 @@ def strip_comments(lines):
 	"""
 	return [line.partition('#')[0].rstrip() for line in lines]
 
+
 def data_lines_from_file(filename):
 	return filter(None, strip_comments(file_lines_if_exists(filename)))
+
 
 def run():
 	"""
 	Run a command in the context of the system dependencies.
 	"""
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--deps-def',
+	parser.add_argument(
+		'--deps-def',
 		default=data_lines_from_file("system deps.txt")
-			+ data_lines_from_file("build deps.txt"),
+		+ data_lines_from_file("build deps.txt"),
 		help="A file specifying the dependencies (one per line)",
 		type=data_lines_from_file, dest="spec_deps")
-	parser.add_argument('--dep', action="append", default=[],
+	parser.add_argument(
+		'--dep', action="append", default=[],
 		help="A specific dependency (multiple allowed)", dest="deps")
-	parser.add_argument('command', type=shlex.split,
+	parser.add_argument(
+		'command', type=shlex.split,
 		default=shlex.split("python2.7 setup.py test"),
 		help="Command to invoke in the context of the dependencies")
-	parser.add_argument('--do-not-remove', default=False, action="store_true",
+	parser.add_argument(
+		'--do-not-remove', default=False, action="store_true",
 		help="Keep any installed packages")
-	parser.add_argument('--aggressively-remove', default=False,
+	parser.add_argument(
+		'--aggressively-remove', default=False,
 		action="store_true",
 		help="When removing packages, also remove those automatically installed"
-			" as dependencies")
-	parser.add_argument('-l', '--log-level', default=logging.INFO,
+		" as dependencies")
+	parser.add_argument(
+		'-l', '--log-level', default=logging.INFO,
 		type=log_level, help="Set log level (DEBUG, INFO, WARNING, ERROR)")
 	args = parser.parse_args()
 	logging.basicConfig(level=args.log_level)
-	context = dependency_context(args.spec_deps + args.deps,
+	context = dependency_context(
+		args.spec_deps + args.deps,
 		aggressively_remove=args.aggressively_remove)
 	with context as to_remove:
 		if args.do_not_remove:
 			del to_remove[:]
 		raise SystemExit(subprocess.Popen(args.command).wait())
 
+
 def log_level(level_string):
 	"""
 	Return a log level for a string
 	"""
 	return getattr(logging, level_string.upper())
+
 
 @contextlib.contextmanager
 def dependency_context(package_names, aggressively_remove=False):
@@ -98,8 +110,9 @@ def dependency_context(package_names, aggressively_remove=False):
 		if not package_names:
 			logging.debug('No packages requested')
 		if package_names:
-			lock = yg.lockfile.FileLock('/tmp/.pkg-context-lock',
-				timeout=30*60)
+			lock = yg.lockfile.FileLock(
+				'/tmp/.pkg-context-lock',
+				timeout=30 * 60)
 			log.info('Acquiring lock to perform install')
 			lock.acquire()
 			log.info('Installing ' + ', '.join(package_names))
@@ -108,7 +121,8 @@ def dependency_context(package_names, aggressively_remove=False):
 				stderr=subprocess.STDOUT,
 			)
 			log.debug('Aptitude output:\n%s', output)
-			installed_packages = jaraco.apt.parse_new_packages(output,
+			installed_packages = jaraco.apt.parse_new_packages(
+				output,
 				include_automatic=aggressively_remove)
 			if not installed_packages:
 				lock.release()
@@ -126,6 +140,7 @@ def dependency_context(package_names, aggressively_remove=False):
 			)
 			lock.release()
 
+
 @contextlib.contextmanager
 def pushd(dir):
 	orig = os.getcwd()
@@ -134,6 +149,7 @@ def pushd(dir):
 		yield dir
 	finally:
 		os.chdir(orig)
+
 
 @contextlib.contextmanager
 def tarball_context(url, target_dir=None, runner=None, pushd=pushd):
@@ -162,6 +178,7 @@ def tarball_context(url, target_dir=None, runner=None, pushd=pushd):
 			yield target_dir
 	finally:
 		runner('rm -Rf {target_dir}'.format(**vars()))
+
 
 def infer_compression(url):
 	"""
