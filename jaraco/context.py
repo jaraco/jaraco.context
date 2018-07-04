@@ -17,6 +17,9 @@ import jaraco.apt
 import yg.lockfile
 
 
+__metaclass__ = type
+
+
 def file_lines_if_exists(filename):
 	"""
 	Return the lines from a file as a list if the file exists, or an
@@ -237,7 +240,7 @@ def null():
 	yield
 
 
-class ExceptionTrap(object):
+class ExceptionTrap:
 	"""
 	A context manager that will catch certain exceptions and provide an
 	indication they occurred.
