@@ -277,14 +277,27 @@ class ExceptionTrap:
 	def __enter__(self):
 		return self
 
-	def __exit__(self, exc_type, exc_val, traceback):
-		matches = exc_type and issubclass(exc_type, self.exceptions)
+	@property
+	def type(self):
+		return self.exc_info[0]
+
+	@property
+	def value(self):
+		return self.exc_info[1]
+
+	@property
+	def tb(self):
+		return self.exc_info[2]
+
+	def __exit__(self, *exc_info):
+		type = exc_info[0]
+		matches = type and issubclass(type, self.exceptions)
 		if matches:
-			self.exc_info = exc_type, exc_val, traceback
+			self.exc_info = exc_info
 		return matches
 
 	def __bool__(self):
-		return bool(self.exc_info[0])
+		return bool(self.type)
 	__nonzero__ = __bool__
 
 

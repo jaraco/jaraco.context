@@ -3,6 +3,8 @@
 
 * Dropped support for Python 3.3.
 * Refreshed project metadata using declarative config.
+* ``ExceptionTrap`` now presents ``type``, ``value``,
+  and ``tb`` attributes.
 
 1.7
 ===
