@@ -1,3 +1,9 @@
+1.8
+===
+
+* Dropped support for Python 3.3.
+* Refreshed project metadata using declarative config.
+
 1.7
 ===
 
