@@ -10,6 +10,8 @@ It's intended to be used by a new or existing project to adopt these practices a
 
 The primary advantage to using an SCM for maintaining these techniques is that those tools help facilitate the merge between the template and its adopting projects.
 
+Another advantage to using an SCM-managed approach is that tools like GitHub recognize that a change in the skeleton is the _same change_ across all projects that merge with that skeleton. Without the ancestry, with a traditional copy/paste approach, a [commit like this](https://github.com/jaraco/skeleton/commit/12eed1326e1bc26ce256e7b3f8cd8d3a5beab2d5) would produce notifications in the upstream project issue for each and every application, but because it's centralized, GitHub provides just the one notification when the change is added to the skeleton.
+
 # Usage
 
 ## new projects
@@ -48,7 +50,8 @@ The features/techniques employed by the skeleton include:
 - setuptools declarative configuration using setup.cfg
 - tox for running tests
 - A README.rst as reStructuredText with some popular badges, but with readthedocs and appveyor badges commented out
-- A CHANGES.rst file intended for publishing release notes about the project.
+- A CHANGES.rst file intended for publishing release notes about the project
+- Use of [black](https://black.readthedocs.io/en/stable/) for code formatting (disabled on unsupported Python 3.5 and earlier)
 
 ## Packaging Conventions
 
@@ -82,7 +85,7 @@ The skeleton assumes the developer has [tox](https://pypi.org/project/tox) insta
 
 Other environments (invoked with `tox -e {name}`) supplied include:
 
-  - a `build-docs` environment to build the documentation
+  - a `docs` environment to build the documentation
   - a `release` environment to publish the package to PyPI
 
 A pytest.ini is included to define common options around running tests. In particular:
@@ -95,32 +98,64 @@ A pytest.ini is included to define common options around running tests. In parti
 
 Relies a .flake8 file to correct some default behaviors:
 
-- allow tabs for indentation (legacy for jaraco projects)
-- disable mutually incompatible rules W503 and W504.
+- disable mutually incompatible rules W503 and W504
+- support for black format
 
 ## Continuous Integration
 
-The project is pre-configured to run tests in [Travis-CI](https://travis-ci.org) (.travis.yml). Any new project must be enabled either through their web site or with the `travis enable` command. In addition to running tests, an additional deploy stage is configured to automatically release tagged commits. The username and password for PyPI must be configured for each project using the `travis` command and only after the travis project is created. As releases are cut with [twine](https://pypi.org/project/twine), the two values are supplied through the `TWINE_USERNAME` and `TWINE_PASSWORD`. To configure the latter as a secret, run the following command:
+The project is pre-configured to run tests through multiple CI providers.
 
-```
-echo "TWINE_PASSWORD={password}" | travis encrypt
-```
+### Azure Pipelines
 
-Or disable it in the CI definition and configure it through the web UI.
+[Azure Pipelines](https://azure.microsoft.com/en-us/services/devops/pipelines/) are the preferred provider as they provide free, fast, multi-platform services. See azure-pipelines.yml for more details.
 
 Features include:
-- test against Python 2 and 3
+
+- test against multiple Python versions
+- run on Ubuntu Bionic
+
+### Travis CI
+
+[Travis-CI](https://travis-ci.org) is configured through .travis.yml. Any new project must be enabled either through their web site or with the `travis enable` command.
+
+Features include:
+- test against 3
 - run on Ubuntu Xenial
 - correct for broken IPv6
 
-Also provided is a minimal template for running under Appveyor (Windows).
+### Appveyor
+
+A minimal template for running under Appveyor (Windows) is provided.
+
+### Continuous Deployments
+
+In addition to running tests, an additional deploy stage is configured to automatically release tagged commits to PyPI using [API tokens](https://pypi.org/help/#apitoken). The release process expects an authorized token to be configured with Azure as the `Azure secrets` variable group. This variable group needs to be created only once per organization. For example:
+
+```
+# create a resource group if none exists
+az group create --name main --location eastus2
+# create the vault (try different names until something works)
+az keyvault create --name secrets007 --resource-group main
+# create the secret
+az keyvault secret set --vault-name secrets007 --name PyPI-token --value $token
+```
+
+Then, in the web UI for the project's Pipelines Library, create the `Azure secrets` variable group referencing the key vault name.
+
+For more details, see [this blog entry](https://blog.jaraco.com/configuring-azure-pipelines-with-secets/).
 
 ## Building Documentation
 
-Documentation is automatically built by [Read the Docs](https://readthedocs.org) when the project is registered with it, by way of the .readthedocs.yml file. To test the docs build manually, a tox env may be invoked as `tox -e build-docs`. Both techniques rely on the dependencies declared in `setup.cfg/options.extras_require.docs`.
+Documentation is automatically built by [Read the Docs](https://readthedocs.org) when the project is registered with it, by way of the .readthedocs.yml file. To test the docs build manually, a tox env may be invoked as `tox -e docs`. Both techniques rely on the dependencies declared in `setup.cfg/options.extras_require.docs`.
 
 In addition to building the sphinx docs scaffolded in `docs/`, the docs build a `history.html` file that first injects release dates and hyperlinks into the CHANGES.rst before incorporating it as history in the docs.
 
 ## Cutting releases
 
 By default, tagged commits are released through the continuous integration deploy stage.
+
+Releases may also be cut manually by invoking the tox environment `release` with the PyPI token set as the TWINE_PASSWORD:
+
+```
+TWINE_PASSWORD={token} tox -e release
+```
