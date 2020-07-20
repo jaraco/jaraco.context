@@ -13,8 +13,15 @@ try:
 except Exception:
     import contextlib as contextlib2
 
-import jaraco.apt
-import yg.lockfile
+try:
+    import jaraco.apt as apt
+except ImportError:
+    apt = None
+
+try:
+    import yg.lockfile
+except ImportError:
+    yg = None
 
 
 __metaclass__ = type
@@ -131,6 +138,12 @@ def dependency_context(package_names, aggressively_remove=False):
     """
     installed_packages = []
     log = logging.getLogger(__name__)
+    if apt is None:
+        log.error("jaraco.apt not found installed")
+        raise ImportError("jaraco.apt not found installed")
+    if yg is None:
+        log.error("yg.lockfile not found installed")
+        raise ImportError("yg.lockfile not found installed")
     try:
         if not package_names:
             logging.debug('No packages requested')
@@ -144,7 +157,7 @@ def dependency_context(package_names, aggressively_remove=False):
                 stderr=subprocess.STDOUT,
             )
             log.debug('Aptitude output:\n%s', output)
-            installed_packages = jaraco.apt.parse_new_packages(
+            installed_packages = apt.parse_new_packages(
                 output, include_automatic=aggressively_remove
             )
             if not installed_packages:
