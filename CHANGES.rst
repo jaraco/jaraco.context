@@ -1,3 +1,9 @@
+v4.0.0
+======
+
+Moved ``dependency_context`` and ``run`` to
+`jaraco.apt <https://pypi.org/project/jaraco.apt>`_.
+
 v3.0.0
 ======
 
