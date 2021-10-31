@@ -6,9 +6,6 @@ import tempfile
 import shutil
 
 
-__metaclass__ = type
-
-
 @contextlib.contextmanager
 def pushd(dir):
     orig = os.getcwd()
@@ -154,8 +151,6 @@ class ExceptionTrap:
 
     def __bool__(self):
         return bool(self.type)
-
-    __nonzero__ = __bool__
 
 
 class suppress(contextlib.suppress, contextlib.ContextDecorator):
