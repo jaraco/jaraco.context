@@ -156,10 +156,15 @@ class ExceptionTrap:
     def raises(self, func, *, _test=bool):
         """
         Wrap func and replace the result with the truth
-        value of the trap.
+        value of the trap (True if an exception occurred).
 
-        # support Python 3.8 syntax
+        First, give the decorator an alias to support Python 3.8
+        Syntax.
+
         >>> raises = ExceptionTrap(ValueError).raises
+
+        Now decorate a function that always fails.
+
         >>> @raises
         ... def fail():
         ...     raise ValueError('failed')
@@ -177,11 +182,20 @@ class ExceptionTrap:
 
     def passes(self, func):
         """
-        # support Python 3.8 syntax
+        Wrap func and replace the result with the truth
+        value of the trap (True if no exception).
+
+        First, give the decorator an alias to support Python 3.8
+        Syntax.
+
         >>> passes = ExceptionTrap(ValueError).passes
+
+        Now decorate a function that always fails.
+
         >>> @passes
         ... def fail():
         ...     raise ValueError('failed')
+
         >>> fail()
         False
         """
