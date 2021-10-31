@@ -158,7 +158,9 @@ class ExceptionTrap:
         Wrap func and replace the result with the truth
         value of the trap.
 
-        >>> @ExceptionTrap(ValueError).raises
+        # support Python 3.8 syntax
+        >>> raises = ExceptionTrap(ValueError).raises
+        >>> @raises
         ... def fail():
         ...     raise ValueError('failed')
         >>> fail()
@@ -175,7 +177,9 @@ class ExceptionTrap:
 
     def passes(self, func):
         """
-        >>> @ExceptionTrap(ValueError).passes
+        # support Python 3.8 syntax
+        >>> passes = ExceptionTrap(ValueError).passes
+        >>> @passes
         ... def fail():
         ...     raise ValueError('failed')
         >>> fail()
