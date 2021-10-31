@@ -4,6 +4,7 @@ import contextlib
 import functools
 import tempfile
 import shutil
+import operator
 
 
 @contextlib.contextmanager
@@ -151,6 +152,36 @@ class ExceptionTrap:
 
     def __bool__(self):
         return bool(self.type)
+
+    def raises(self, func, *, _test=bool):
+        """
+        Wrap func and replace the result with the truth
+        value of the trap.
+
+        >>> @ExceptionTrap(ValueError).raises
+        ... def fail():
+        ...     raise ValueError('failed')
+        >>> fail()
+        True
+        """
+
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            with ExceptionTrap(self.exceptions) as trap:
+                func(*args, **kwargs)
+            return _test(trap)
+
+        return wrapper
+
+    def passes(self, func):
+        """
+        >>> @ExceptionTrap(ValueError).passes
+        ... def fail():
+        ...     raise ValueError('failed')
+        >>> fail()
+        False
+        """
+        return self.raises(func, _test=operator.not_)
 
 
 class suppress(contextlib.suppress, contextlib.ContextDecorator):

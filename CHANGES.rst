@@ -1,3 +1,9 @@
+v4.1.0
+======
+
+To the ``ExceptionTrap``, added ``.raises()`` and ``.passes``
+decorators.
+
 v4.0.0
 ======
 
