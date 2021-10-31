@@ -1,3 +1,8 @@
+v4.1.1
+======
+
+Fixed some docs rendering issues.
+
 v4.1.0
 ======
 
