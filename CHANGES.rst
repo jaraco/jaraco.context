@@ -1,3 +1,10 @@
+v4.1.2
+======
+
+Packaging refresh.
+
+Enrolled with Tidelift.
+
 v4.1.1
 ======
 
