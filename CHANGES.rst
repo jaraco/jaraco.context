@@ -1,3 +1,8 @@
+v4.2.0
+======
+
+Added ``on_interrupt`` decorator.
+
 v4.1.2
 ======
 
