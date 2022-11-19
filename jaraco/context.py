@@ -232,7 +232,13 @@ class on_interrupt(contextlib.ContextDecorator):
     ...     on_interrupt('ignore')(do_interrupt)()
     """
 
-    def __init__(self, action='error', /, code=1):
+    def __init__(
+        self,
+        action='error',
+        # py3.7 compat
+        # /,
+        code=1,
+    ):
         self.action = action
         self.code = code
 
