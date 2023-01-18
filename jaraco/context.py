@@ -9,6 +9,13 @@ import operator
 
 @contextlib.contextmanager
 def pushd(dir):
+    """
+    >>> tmp_path = getfixture('tmp_path')
+    >>> with pushd(tmp_path):
+    ...     assert os.getcwd() == os.fspath(tmp_path)
+    >>> assert os.getcwd() != os.fspath(tmp_path)
+    """
+
     orig = os.getcwd()
     os.chdir(dir)
     try:
