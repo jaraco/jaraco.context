@@ -55,6 +55,15 @@ def tarball_context(url, target_dir=None, runner=None, pushd=pushd):
 def infer_compression(url):
     """
     Given a URL or filename, infer the compression code for tar.
+
+    >>> infer_compression('http://foo/bar.tar.gz')
+    'z'
+    >>> infer_compression('http://foo/bar.tgz')
+    'z'
+    >>> infer_compression('file.bz')
+    'j'
+    >>> infer_compression('file.xz')
+    'J'
     """
     # cheat and just assume it's the last two characters
     compression_indicator = url[-2:]
