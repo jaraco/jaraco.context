@@ -103,6 +103,12 @@ def repo_context(url, branch=None, quiet=True, dest_ctx=temp_dir):
 
 @contextlib.contextmanager
 def null():
+    """
+    A null context suitable to stand in for a meaningful context.
+
+    >>> with null() as value:
+    ...     assert value is None
+    """
     yield
 
 
