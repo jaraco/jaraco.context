@@ -131,6 +131,10 @@ class ExceptionTrap:
     ...     raise ValueError("1 + 1 is not 3")
     >>> bool(trap)
     True
+    >>> trap.value
+    ValueError('1 + 1 is not 3')
+    >>> trap.tb
+    <traceback object at ...>
 
     >>> with ExceptionTrap(ValueError) as trap:
     ...     raise Exception()
