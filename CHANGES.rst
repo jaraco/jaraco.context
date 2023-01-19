@@ -1,3 +1,8 @@
+v4.3.0
+======
+
+Deprecated ``runner`` parameter to ``tarball_context``.
+
 v4.2.1
 ======
 
