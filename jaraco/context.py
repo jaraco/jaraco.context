@@ -26,11 +26,9 @@ def pushd(dir):
 
 
 @contextlib.contextmanager
-def tarball(url, target_dir=None, pushd=pushd):
+def tarball(url, target_dir=None):
     """
-    Get a tarball, extract it, change to that directory, yield, then
-    clean up.
-    `pushd` is a context manager for changing the directory.
+    Get a tarball, extract it, yield, then clean up.
     """
     if target_dir is None:
         target_dir = os.path.basename(url).replace('.tar.gz', '').replace('.tgz', '')
@@ -45,19 +43,30 @@ def tarball(url, target_dir=None, pushd=pushd):
         extract = 'tar x{compression} --strip-components=1 -C {target_dir}'
         cmd = ' | '.join((getter, extract))
         runner(cmd.format(compression=infer_compression(url), **vars()))
-        with pushd(target_dir):
-            yield target_dir
+        yield target_dir
     finally:
         runner('rm -Rf {target_dir}'.format(**vars()))
 
 
+@contextlib.contextmanager
+def tarball_cwd(*args, **kwargs):
+    """
+    Convenience method for getting a tarball as the current working dir.
+    """
+    with tarball(*args, **kwargs) as tball, pushd(tball) as dir:
+        yield dir
+
+
+@contextlib.contextmanager
 def tarball_context(*args, **kwargs):
     warnings.warn(
-        "tarball_context is deprecated. Use tarball instead.",
+        "tarball_context is deprecated. Use tarball or tarball_cwd instead.",
         DeprecationWarning,
         stacklevel=2,
     )
-    return tarball(*args, **kwargs)
+    pushd_ctx = kwargs.pop('pushd', pushd)
+    with tarball(*args, **kwargs) as tball, pushd_ctx(tball) as dir:
+        yield dir
 
 
 def infer_compression(url):
