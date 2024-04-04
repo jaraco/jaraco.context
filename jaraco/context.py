@@ -53,11 +53,13 @@ def tarball(
         runner('rm -Rf {target_dir}'.format(**vars()))
 
 
-def compose(*cmgrs):
+def _compose(*cmgrs):
     """
-    Compose any number of unary context managers into a single one.
+    Compose any number of dependent context managers into a single one.
 
-    Also allows the innermost context manager to take arbitrary arguments.
+    The last, innermost context manager may take arbitrary arguments, but
+    each successive context manager should accept the result from the
+    previous as a single parameter.
 
     Like :func:`jaraco.functools.compose`, behavior works from right to
     left, so the context manager should be indicated from outermost to
@@ -66,7 +68,7 @@ def compose(*cmgrs):
     Example, to create a context manager to change to a temporary
     directory:
 
-    >>> temp_dir_as_cwd = compose(pushd, temp_dir)
+    >>> temp_dir_as_cwd = _compose(pushd, temp_dir)
     >>> with temp_dir_as_cwd() as dir:
     ...     assert os.path.samefile(os.getcwd(), dir)
     """
@@ -81,7 +83,7 @@ def compose(*cmgrs):
     return functools.reduce(compose_two, reversed(cmgrs))
 
 
-tarball_cwd = compose(pushd, tarball)
+tarball_cwd = _compose(pushd, tarball)
 
 
 @contextlib.contextmanager
