@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import contextlib
 import functools
 import operator
@@ -7,9 +9,11 @@ import subprocess
 import tempfile
 import warnings
 
+from typing import Iterator
+
 
 @contextlib.contextmanager
-def pushd(dir):
+def pushd(dir: str | os.PathLike) -> Iterator[str | os.PathLike]:
     """
     >>> tmp_path = getfixture('tmp_path')
     >>> with pushd(tmp_path):
@@ -26,7 +30,9 @@ def pushd(dir):
 
 
 @contextlib.contextmanager
-def tarball(url, target_dir=None):
+def tarball(
+    url, target_dir: str | os.PathLike | None = None
+) -> Iterator[str | os.PathLike]:
     """
     Get a tarball, extract it, yield, then clean up.
     """
@@ -49,7 +55,7 @@ def tarball(url, target_dir=None):
 
 
 @contextlib.contextmanager
-def tarball_cwd(*args, **kwargs):
+def tarball_cwd(*args, **kwargs) -> Iterator[str | os.PathLike]:
     """
     Convenience method for getting a tarball as the current working dir.
     """
