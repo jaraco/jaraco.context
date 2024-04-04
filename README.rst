@@ -20,6 +20,20 @@
 .. image:: https://tidelift.com/badges/package/pypi/jaraco.context
    :target: https://tidelift.com/subscription/pkg/pypi-jaraco.context?utm_source=pypi-jaraco.context&utm_medium=readme
 
+
+Highlights
+==========
+
+See the docs linked from the badge above for the full details, but here are some features that may be of interest.
+
+- ``ExceptionTrap`` provides a general-purpose wrapper for trapping exceptions and then acting on the outcome. Includes ``passes`` and ``raises`` decorators to replace the result of a wrapped function by a boolean indicating the outcome of the exception trap. See `this keyring commit <https://github.com/jaraco/keyring/commit/a85a7cbc6c909f8121660ed1f7b487f99a1c2bf7>`_ for an example of it in production.
+- ``suppress`` simply enables ``contextlib.suppress`` as a decorator.
+- ``on_interrupt`` is a decorator used by CLI entry points to affect the handling of a ``KeyboardInterrupt``. Inspired by `Lucretiel/autocommand#18 <https://github.com/Lucretiel/autocommand/issues/18>`_.
+- ``pushd`` is similar to pytest's ``monkeypatch.chdir`` or path's `default context <https://path.readthedocs.io/en/latest/api.html>`_, changes the current working directory for the duration of the context.
+- ``tarball_context`` will download a tarball, extract it, change directory, yield, then clean up after. Convenient when working with web assets.
+- ``null`` is there for those times when one code branch needs a context and the other doesn't; this null context provides symmetry across those branches.
+
+
 For Enterprise
 ==============
 

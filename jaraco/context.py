@@ -120,6 +120,10 @@ def null():
 
     >>> with null() as value:
     ...     assert value is None
+
+    This context is most useful when dealing with two or more code
+    branches but only some need a context. Wrap the others in a null
+    context to provide symmetry across all options.
     """
     yield
 
