@@ -40,6 +40,7 @@ nitpick_ignore = [
 extensions += ['sphinx.ext.intersphinx']
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
+    'jaraco.functools': ('https://jaracofunctools.readthedocs.io/en/latest', None),
 }
 
 # Preserve authored syntax for defaults
