@@ -1,3 +1,19 @@
+v5.0.0
+======
+
+Features
+--------
+
+- Renamed tarball_context to tarball and deprecated tarball_context compatibility shim. (#3)
+- Disentangle pushd from tarball. (#4)
+
+
+Deprecations and Removals
+-------------------------
+
+- Removed deprecated 'runner' parameter to tarball_context.
+
+
 v4.3.0
 ======
 
