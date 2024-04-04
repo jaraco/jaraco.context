@@ -156,7 +156,6 @@ def repo_context(url, branch=None, quiet=True, dest_ctx=temp_dir):
         yield repo_dir
 
 
-@contextlib.contextmanager
 def null():
     """
     A null context suitable to stand in for a meaningful context.
@@ -168,7 +167,12 @@ def null():
     branches but only some need a context. Wrap the others in a null
     context to provide symmetry across all options.
     """
-    yield
+    warnings.warn(
+        "null is deprecated. Use contextlib.nullcontext",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return contextlib.nullcontext()
 
 
 class ExceptionTrap:
