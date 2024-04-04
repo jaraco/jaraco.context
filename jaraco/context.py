@@ -53,13 +53,35 @@ def tarball(
         runner('rm -Rf {target_dir}'.format(**vars()))
 
 
-@contextlib.contextmanager
-def tarball_cwd(*args, **kwargs) -> Iterator[str | os.PathLike]:
+def compose(*cmgrs):
     """
-    Convenience method for getting a tarball as the current working dir.
+    Compose any number of unary context managers into a single one.
+
+    Also allows the innermost context manager to take arbitrary arguments.
+
+    Like :func:`jaraco.functools.compose`, behavior works from right to
+    left, so the context manager should be indicated from outermost to
+    innermost.
+
+    Example, to create a context manager to change to a temporary
+    directory:
+
+    >>> temp_dir_as_cwd = compose(pushd, temp_dir)
+    >>> with temp_dir_as_cwd() as dir:
+    ...     assert os.path.samefile(os.getcwd(), dir)
     """
-    with tarball(*args, **kwargs) as tball, pushd(tball) as dir:
-        yield dir
+
+    def compose_two(inner, outer):
+        def composed(*args, **kwargs):
+            with inner(*args, **kwargs) as saved, outer(saved) as res:
+                yield res
+
+        return contextlib.contextmanager(composed)
+
+    return functools.reduce(compose_two, reversed(cmgrs))
+
+
+tarball_cwd = compose(pushd, tarball)
 
 
 @contextlib.contextmanager
