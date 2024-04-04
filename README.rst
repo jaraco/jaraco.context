@@ -30,7 +30,7 @@ See the docs linked from the badge above for the full details, but here are some
 - ``suppress`` simply enables ``contextlib.suppress`` as a decorator.
 - ``on_interrupt`` is a decorator used by CLI entry points to affect the handling of a ``KeyboardInterrupt``. Inspired by `Lucretiel/autocommand#18 <https://github.com/Lucretiel/autocommand/issues/18>`_.
 - ``pushd`` is similar to pytest's ``monkeypatch.chdir`` or path's `default context <https://path.readthedocs.io/en/latest/api.html>`_, changes the current working directory for the duration of the context.
-- ``tarball_context`` will download a tarball, extract it, change directory, yield, then clean up after. Convenient when working with web assets.
+- ``tarball`` will download a tarball, extract it, change directory, yield, then clean up after. Convenient when working with web assets.
 - ``null`` is there for those times when one code branch needs a context and the other doesn't; this null context provides symmetry across those branches.
 
 

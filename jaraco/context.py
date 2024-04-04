@@ -26,7 +26,7 @@ def pushd(dir):
 
 
 @contextlib.contextmanager
-def tarball_context(url, target_dir=None, pushd=pushd):
+def tarball(url, target_dir=None, pushd=pushd):
     """
     Get a tarball, extract it, change to that directory, yield, then
     clean up.
@@ -49,6 +49,15 @@ def tarball_context(url, target_dir=None, pushd=pushd):
             yield target_dir
     finally:
         runner('rm -Rf {target_dir}'.format(**vars()))
+
+
+def tarball_context(*args, **kwargs):
+    warnings.warn(
+        "tarball_context is deprecated. Use tarball instead.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    return tarball(*args, **kwargs)
 
 
 def infer_compression(url):
