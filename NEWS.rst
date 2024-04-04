@@ -1,3 +1,13 @@
+v5.1.0
+======
+
+Features
+--------
+
+- Implement experimental _compose for composing context managers. If you wish to use this function, please comment in the issue regarding your thoughts on the ordering. (#6)
+- Deprecate null context. (#7)
+
+
 v5.0.0
 ======
 
