@@ -51,7 +51,7 @@ def tarball(
     #  then
     #  use -C to cause the files to be extracted to {target_dir}. This ensures
     #  that we always know where the files were extracted.
-    runner('mkdir {target_dir}'.format(**vars()))
+    os.mkdir(target_dir)
     try:
         getter = 'wget {url} -O -'
         extract = 'tar x{compression} --strip-components=1 -C {target_dir}'
@@ -59,7 +59,7 @@ def tarball(
         runner(cmd.format(compression=infer_compression(url), **vars()))
         yield target_dir
     finally:
-        runner('rm -Rf {target_dir}'.format(**vars()))
+        shutil.rmtree(target_dir)
 
 
 def _compose(*cmgrs):
