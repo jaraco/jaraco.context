@@ -6,7 +6,9 @@ import operator
 import os
 import shutil
 import subprocess
+import tarfile
 import tempfile
+import urllib.request
 import warnings
 from typing import Iterator
 
@@ -52,13 +54,20 @@ def tarball(
     #  that we always know where the files were extracted.
     os.mkdir(target_dir)
     try:
-        getter = f'wget {url} -O -'
-        extract = f'tar x{infer_compression(url)} --strip-components=1 -C {target_dir}'
-        cmd = ' | '.join((getter, extract))
-        subprocess.check_call(cmd, shell=True)
+        req = urllib.request.urlopen(url)
+        with tarfile.open(fileobj=req, mode='r|gz') as tf:
+            for member in map(strip_first_component, tf.getmembers()):
+                tf.extract(member, path=target_dir)
         yield target_dir
     finally:
         shutil.rmtree(target_dir)
+
+
+def strip_first_component(
+    member: tarfile.TarInfo,
+) -> tarfile.TarInfo:
+    _, member.name = member.name.split('/', 1)
+    return member
 
 
 def _compose(*cmgrs):
