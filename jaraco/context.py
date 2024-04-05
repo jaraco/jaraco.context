@@ -46,17 +46,16 @@ def tarball(
     """
     if target_dir is None:
         target_dir = os.path.basename(url).replace('.tar.gz', '').replace('.tgz', '')
-    runner = functools.partial(subprocess.check_call, shell=True)
     # In the tar command, use --strip-components=1 to strip the first path and
     #  then
     #  use -C to cause the files to be extracted to {target_dir}. This ensures
     #  that we always know where the files were extracted.
     os.mkdir(target_dir)
     try:
-        getter = 'wget {url} -O -'
-        extract = 'tar x{compression} --strip-components=1 -C {target_dir}'
+        getter = f'wget {url} -O -'
+        extract = f'tar x{infer_compression(url)} --strip-components=1 -C {target_dir}'
         cmd = ' | '.join((getter, extract))
-        runner(cmd.format(compression=infer_compression(url), **vars()))
+        subprocess.check_call(cmd, shell=True)
         yield target_dir
     finally:
         shutil.rmtree(target_dir)
