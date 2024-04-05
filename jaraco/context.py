@@ -34,6 +34,15 @@ def tarball(
 ) -> Iterator[str | os.PathLike]:
     """
     Get a tarball, extract it, yield, then clean up.
+
+    >>> import urllib.request
+    >>> url = getfixture('tarfile_served')
+    >>> target = getfixture('tmp_path') / 'out'
+    >>> tb = tarball(url, target_dir=target)
+    >>> import pathlib
+    >>> with tb as extracted:
+    ...     contents = pathlib.Path(extracted, 'contents.txt').read_text()
+    >>> assert not os.path.exists(extracted)
     """
     if target_dir is None:
         target_dir = os.path.basename(url).replace('.tar.gz', '').replace('.tgz', '')
