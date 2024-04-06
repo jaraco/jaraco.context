@@ -2,17 +2,21 @@ from __future__ import annotations
 
 import contextlib
 import functools
-import io
 import operator
 import os
 import shutil
 import subprocess
 import sys
-import tarfile
 import tempfile
 import urllib.request
 import warnings
 from typing import Iterator
+
+
+if sys.version_info < (3, 12):
+    from backports import tarfile
+else:
+    import tarfile
 
 
 @contextlib.contextmanager
@@ -57,18 +61,8 @@ def tarball(
     os.mkdir(target_dir)
     try:
         req = urllib.request.urlopen(url)
-        if sys.version_info < (3, 12):
-            # In order to getmembers + extract requires a seekable file descriptor
-            tf = tarfile.open(fileobj=io.BytesIO(req.read()), mode='r:gz')
-        else:
-            tf = tarfile.open(fileobj=req, mode='r|gz')
-        with tf:
-            if sys.version_info < (3, 12):
-                stripper = functools.partial(strip_first_component, path=target_dir)
-                for member in map(stripper, tf.getmembers()):
-                    tf.extract(member, path=target_dir)
-            else:
-                tf.extractall(path=target_dir, filter=strip_first_component)
+        with tarfile.open(fileobj=req, mode='r|gz') as tf:
+            tf.extractall(path=target_dir, filter=strip_first_component)
         yield target_dir
     finally:
         shutil.rmtree(target_dir)
