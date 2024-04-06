@@ -1,0 +1,1 @@
+Deprecate infer_compression, as it was used primarily for deferring to the tar command.

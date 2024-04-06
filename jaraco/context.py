@@ -134,6 +134,11 @@ def infer_compression(url):
     >>> infer_compression('file.xz')
     'J'
     """
+    warnings.warn(
+        "infer_compression is deprecated with no replacement",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     # cheat and just assume it's the last two characters
     compression_indicator = url[-2:]
     mapping = dict(gz='z', bz='j', xz='J')
