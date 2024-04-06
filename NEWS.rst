@@ -1,3 +1,12 @@
+v5.2.0
+======
+
+Features
+--------
+
+- Implemented tarfile using native functionality and avoiding subprocessing, making it portable. (#5)
+
+
 v5.1.0
 ======
 
