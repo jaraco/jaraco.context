@@ -6,6 +6,7 @@ import operator
 import os
 import shutil
 import subprocess
+import sys
 import tarfile
 import tempfile
 import urllib.request
@@ -56,8 +57,12 @@ def tarball(
     try:
         req = urllib.request.urlopen(url)
         with tarfile.open(fileobj=req, mode='r|gz') as tf:
-            for member in map(strip_first_component, tf.getmembers()):
-                tf.extract(member, path=target_dir)
+            if sys.version_info < (3, 12):
+                stripper = functools.partial(strip_first_component, path=target_dir)
+                for member in map(stripper, tf.getmembers()):
+                    tf.extract(member, path=target_dir)
+            else:
+                tf.extractall(path=target_dir, filter=strip_first_component)
         yield target_dir
     finally:
         shutil.rmtree(target_dir)
@@ -65,6 +70,7 @@ def tarball(
 
 def strip_first_component(
     member: tarfile.TarInfo,
+    path,
 ) -> tarfile.TarInfo:
     _, member.name = member.name.split('/', 1)
     return member
