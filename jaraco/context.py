@@ -49,7 +49,7 @@ def tarball(
     >>> tb = tarball(url, target_dir=target)
     >>> import pathlib
     >>> with tb as extracted:
-    ...     contents = pathlib.Path(extracted, 'contents.txt').read_text()
+    ...     contents = pathlib.Path(extracted, 'contents.txt').read_text(encoding='utf-8')
     >>> assert not os.path.exists(extracted)
     """
     if target_dir is None:
@@ -155,7 +155,7 @@ def temp_dir(remover=shutil.rmtree):
     >>> import pathlib
     >>> with temp_dir() as the_dir:
     ...     assert os.path.isdir(the_dir)
-    ...     _ = pathlib.Path(the_dir).joinpath('somefile').write_text('contents')
+    ...     _ = pathlib.Path(the_dir).joinpath('somefile').write_text('contents', encoding='utf-8')
     >>> assert not os.path.exists(the_dir)
     """
     temp_dir = tempfile.mkdtemp()
