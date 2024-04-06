@@ -1,0 +1,1 @@
+Enable 'transparent' compression in the tarfile context.

@@ -61,7 +61,7 @@ def tarball(
     os.mkdir(target_dir)
     try:
         req = urllib.request.urlopen(url)
-        with tarfile.open(fileobj=req, mode='r|gz') as tf:
+        with tarfile.open(fileobj=req, mode='r|*') as tf:
             tf.extractall(path=target_dir, filter=strip_first_component)
         yield target_dir
     finally:
