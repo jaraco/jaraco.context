@@ -1,3 +1,18 @@
+v5.3.0
+======
+
+Features
+--------
+
+- Deprecate infer_compression, as it was used primarily for deferring to the tar command.
+
+
+Bugfixes
+--------
+
+- Enable 'transparent' compression in the tarfile context.
+
+
 v5.2.0
 ======
 
