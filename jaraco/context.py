@@ -6,9 +6,17 @@ import operator
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
+import urllib.request
 import warnings
 from typing import Iterator
+
+
+if sys.version_info < (3, 12):
+    from backports import tarfile
+else:
+    import tarfile
 
 
 @contextlib.contextmanager
@@ -34,23 +42,38 @@ def tarball(
 ) -> Iterator[str | os.PathLike]:
     """
     Get a tarball, extract it, yield, then clean up.
+
+    >>> import urllib.request
+    >>> url = getfixture('tarfile_served')
+    >>> target = getfixture('tmp_path') / 'out'
+    >>> tb = tarball(url, target_dir=target)
+    >>> import pathlib
+    >>> with tb as extracted:
+    ...     contents = pathlib.Path(extracted, 'contents.txt').read_text()
+    >>> assert not os.path.exists(extracted)
     """
     if target_dir is None:
         target_dir = os.path.basename(url).replace('.tar.gz', '').replace('.tgz', '')
-    runner = functools.partial(subprocess.check_call, shell=True)
     # In the tar command, use --strip-components=1 to strip the first path and
     #  then
     #  use -C to cause the files to be extracted to {target_dir}. This ensures
     #  that we always know where the files were extracted.
-    runner('mkdir {target_dir}'.format(**vars()))
+    os.mkdir(target_dir)
     try:
-        getter = 'wget {url} -O -'
-        extract = 'tar x{compression} --strip-components=1 -C {target_dir}'
-        cmd = ' | '.join((getter, extract))
-        runner(cmd.format(compression=infer_compression(url), **vars()))
+        req = urllib.request.urlopen(url)
+        with tarfile.open(fileobj=req, mode='r|gz') as tf:
+            tf.extractall(path=target_dir, filter=strip_first_component)
         yield target_dir
     finally:
-        runner('rm -Rf {target_dir}'.format(**vars()))
+        shutil.rmtree(target_dir)
+
+
+def strip_first_component(
+    member: tarfile.TarInfo,
+    path,
+) -> tarfile.TarInfo:
+    _, member.name = member.name.split('/', 1)
+    return member
 
 
 def _compose(*cmgrs):
