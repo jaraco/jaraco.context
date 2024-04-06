@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import contextlib
 import functools
+import io
 import operator
 import os
 import shutil
@@ -56,7 +57,12 @@ def tarball(
     os.mkdir(target_dir)
     try:
         req = urllib.request.urlopen(url)
-        with tarfile.open(fileobj=req, mode='r|gz') as tf:
+        if sys.version_info < (3, 12):
+            # In order to getmembers + extract requires a seekable file descriptor
+            tf = tarfile.open(fileobj=io.BytesIO(req.read()), mode='r:gz')
+        else:
+            tf = tarfile.open(fileobj=req, mode='r|gz')
+        with tf:
             if sys.version_info < (3, 12):
                 stripper = functools.partial(strip_first_component, path=target_dir)
                 for member in map(stripper, tf.getmembers()):
