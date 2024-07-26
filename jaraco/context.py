@@ -334,7 +334,9 @@ class suppress(contextlib.suppress, contextlib.ContextDecorator):
 
 class on_interrupt(contextlib.ContextDecorator):
     """
-    Replace a KeyboardInterrupt with SystemExit(1)
+    Replace a KeyboardInterrupt with SystemExit(1).
+
+    Useful in conjunction with console entry point functions.
 
     >>> def do_interrupt():
     ...     raise KeyboardInterrupt()
