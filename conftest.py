@@ -8,6 +8,11 @@ import portend
 import pytest
 
 
+class QuietHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
+    def log_message(self, format, *args):
+        pass
+
+
 @pytest.fixture
 def tarfile_served(tmp_path_factory):
     """
@@ -26,7 +31,7 @@ def tarfile_served(tmp_path_factory):
 
 def start_server(path):
     _host, port = addr = ('', portend.find_available_local_port())
-    Handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=path)
+    Handler = functools.partial(QuietHTTPRequestHandler, directory=path)
     httpd = http.server.HTTPServer(addr, Handler)
     threading.Thread(target=httpd.serve_forever, daemon=True).start()
     return httpd, f'http://localhost:{port}'
