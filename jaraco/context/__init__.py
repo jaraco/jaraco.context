@@ -146,8 +146,7 @@ def repo_context(url, branch=None, quiet=True, dest_ctx=temp_dir):
     exe = 'git' if 'git' in url else 'hg'
     with dest_ctx() as repo_dir:
         cmd = [exe, 'clone', url, repo_dir]
-        if branch:
-            cmd.extend(['--branch', branch])
+        cmd.extend(['--branch', branch] * bool(branch))
         devnull = open(os.path.devnull, 'w')
         stdout = devnull if quiet else None
         subprocess.check_call(cmd, stdout=stdout)
