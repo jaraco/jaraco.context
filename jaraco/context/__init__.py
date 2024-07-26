@@ -153,8 +153,8 @@ def repo_context(url, branch=None, quiet=True, dest_ctx=temp_dir):
     with dest_ctx() as repo_dir:
         cmd = [exe, 'clone', url, repo_dir]
         cmd.extend(['--branch', branch] * bool(branch))
-        stdout = subprocess.DEVNULL if quiet else None
-        subprocess.check_call(cmd, stdout=stdout)
+        stream = subprocess.DEVNULL if quiet else None
+        subprocess.check_call(cmd, stdout=stream, stderr=stream)
         yield repo_dir
 
 
