@@ -9,7 +9,6 @@ import subprocess
 import sys
 import tempfile
 import urllib.request
-import warnings
 from typing import Iterator
 
 
@@ -112,43 +111,9 @@ def _compose(*cmgrs):
 
 
 tarball_cwd = _compose(pushd, tarball)
-
-
-@contextlib.contextmanager
-def tarball_context(*args, **kwargs):
-    warnings.warn(
-        "tarball_context is deprecated. Use tarball or tarball_cwd instead.",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    pushd_ctx = kwargs.pop('pushd', pushd)
-    with tarball(*args, **kwargs) as tball, pushd_ctx(tball) as dir:
-        yield dir
-
-
-def infer_compression(url):
-    """
-    Given a URL or filename, infer the compression code for tar.
-
-    >>> infer_compression('http://foo/bar.tar.gz')
-    'z'
-    >>> infer_compression('http://foo/bar.tgz')
-    'z'
-    >>> infer_compression('file.bz')
-    'j'
-    >>> infer_compression('file.xz')
-    'J'
-    """
-    warnings.warn(
-        "infer_compression is deprecated with no replacement",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    # cheat and just assume it's the last two characters
-    compression_indicator = url[-2:]
-    mapping = dict(gz='z', bz='j', xz='J')
-    # Assume 'z' (gzip) if no match
-    return mapping.get(compression_indicator, 'z')
+"""
+A tarball context with the current working directory pointing to the contents.
+"""
 
 
 @contextlib.contextmanager
@@ -187,25 +152,6 @@ def repo_context(url, branch=None, quiet=True, dest_ctx=temp_dir):
         stdout = devnull if quiet else None
         subprocess.check_call(cmd, stdout=stdout)
         yield repo_dir
-
-
-def null():
-    """
-    A null context suitable to stand in for a meaningful context.
-
-    >>> with null() as value:
-    ...     assert value is None
-
-    This context is most useful when dealing with two or more code
-    branches but only some need a context. Wrap the others in a null
-    context to provide symmetry across all options.
-    """
-    warnings.warn(
-        "null is deprecated. Use contextlib.nullcontext",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    return contextlib.nullcontext()
 
 
 class ExceptionTrap:
