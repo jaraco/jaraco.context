@@ -1,3 +1,18 @@
+v6.0.0
+======
+
+Bugfixes
+--------
+
+- Fixed bug in repo_context where standard output from git would not be hidden (because git emits standard output on the stderr stream).
+
+
+Deprecations and Removals
+-------------------------
+
+- Removed deprecated 'tarball_context', 'infer_compression', and 'null' contexts.
+
+
 v5.3.0
 ======
 

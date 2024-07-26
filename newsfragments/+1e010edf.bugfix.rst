@@ -1,1 +1,0 @@
-Fixed bug in repo_context where standard output from git would not be hidden (because git emits standard output on the stderr stream).

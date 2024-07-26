@@ -145,7 +145,7 @@ def temp_dir(remover=shutil.rmtree):
 
 
 @contextlib.contextmanager
-def repo_context(url, branch=None, quiet=True, dest_ctx=temp_dir):
+def repo_context(url, branch: str | None = None, quiet: bool = True, dest_ctx=temp_dir):
     """
     Check out the repo indicated by url.
 
