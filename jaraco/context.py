@@ -41,7 +41,16 @@ def tarball(
     url, target_dir: str | os.PathLike | None = None
 ) -> Iterator[str | os.PathLike]:
     """
-    Get a tarball, extract it, yield, then clean up.
+    Get a URL to a tarball, download, extract, yield, then clean up.
+
+    Assumes everything in the tarball is prefixed with a common
+    directory. That common path is stripped and the contents
+    are extracted to ``target_dir``, similar to passing
+    ``-C {target} --strip-components 1`` to the ``tar`` command.
+
+    Uses the streaming protocol to extract the contents from a
+    stream in a single pass without loading the whole file into
+    memory.
 
     >>> import urllib.request
     >>> url = getfixture('tarfile_served')
@@ -54,10 +63,6 @@ def tarball(
     """
     if target_dir is None:
         target_dir = os.path.basename(url).replace('.tar.gz', '').replace('.tgz', '')
-    # In the tar command, use --strip-components=1 to strip the first path and
-    #  then
-    #  use -C to cause the files to be extracted to {target_dir}. This ensures
-    #  that we always know where the files were extracted.
     os.mkdir(target_dir)
     try:
         req = urllib.request.urlopen(url)
