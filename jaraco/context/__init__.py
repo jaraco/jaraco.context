@@ -142,6 +142,12 @@ def repo_context(url, branch=None, quiet=True, dest_ctx=temp_dir):
 
     If dest_ctx is supplied, it should be a context manager
     to yield the target directory for the check out.
+
+    >>> repo = repo_context('https://github.com/jaraco/jaraco.context')
+    >>> with repo as dest:
+    ...     listing = os.listdir(dest)
+    >>> 'README.rst' in listing
+    True
     """
     exe = 'git' if 'git' in url else 'hg'
     with dest_ctx() as repo_dir:
