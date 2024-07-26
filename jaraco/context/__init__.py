@@ -59,6 +59,15 @@ def tarball(
     >>> with tb as extracted:
     ...     contents = pathlib.Path(extracted, 'contents.txt').read_text(encoding='utf-8')
     >>> assert not os.path.exists(extracted)
+
+    If the target is not specified, contents are extracted to a
+    directory relative to the current working directory named after
+    the name of the file as extracted from the URL.
+
+    >>> target = getfixture('tmp_path')
+    >>> with pushd(target), tarball(url):
+    ...     target.joinpath('served').is_dir()
+    True
     """
     if target_dir is None:
         target_dir = os.path.basename(url).replace('.tar.gz', '').replace('.tgz', '')
