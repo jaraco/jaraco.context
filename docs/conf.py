@@ -33,6 +33,7 @@ nitpicky = True
 
 nitpick_ignore = [
     ('py:class', 'contextlib.suppress'),
+    ('py:class', 'jaraco.context.T'),
 ]
 
 # Include Python intersphinx mapping to prevent failures
