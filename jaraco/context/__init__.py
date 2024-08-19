@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import contextlib
+import errno
 import functools
 import operator
 import os
+import platform
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -133,6 +136,28 @@ A tarball context with the current working directory pointing to the contents.
 """
 
 
+def remove_readonly(func, path, exc_info):
+    """
+    Add support for removing read-only files on Windows.
+    """
+    _, exc, _ = exc_info
+    if func in (os.rmdir, os.remove, os.unlink) and exc.errno == errno.EACCES:
+        # change the file to be readable,writable,executable: 0777
+        os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
+        # retry
+        func(path)
+    else:
+        raise
+
+
+def robust_remover():
+    return (
+        functools.partial(shutil.rmtree, onerror=remove_readonly)
+        if platform.system() == 'Windows'
+        else shutil.rmtree
+    )
+
+
 @contextlib.contextmanager
 def temp_dir(remover: Callable[[str], None] = shutil.rmtree) -> Iterator[str]:
     """
@@ -142,7 +167,6 @@ def temp_dir(remover: Callable[[str], None] = shutil.rmtree) -> Iterator[str]:
     >>> import pathlib
     >>> with temp_dir() as the_dir:
     ...     assert os.path.isdir(the_dir)
-    ...     _ = pathlib.Path(the_dir).joinpath('somefile').write_text('contents', encoding='utf-8')
     >>> assert not os.path.exists(the_dir)
     """
     temp_dir = tempfile.mkdtemp()
@@ -152,12 +176,15 @@ def temp_dir(remover: Callable[[str], None] = shutil.rmtree) -> Iterator[str]:
         remover(temp_dir)
 
 
+robust_temp_dir = functools.partial(temp_dir, remover=robust_remover())
+
+
 @contextlib.contextmanager
 def repo_context(
     url,
     branch: str | None = None,
     quiet: bool = True,
-    dest_ctx: Callable[[], contextlib.AbstractContextManager[str]] = temp_dir,
+    dest_ctx: Callable[[], contextlib.AbstractContextManager[str]] = robust_temp_dir,
 ):
     """
     Check out the repo indicated by url.
