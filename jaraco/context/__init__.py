@@ -11,9 +11,8 @@ import stat
 import subprocess
 import sys
 import tempfile
-import types
 import urllib.request
-from typing import Iterator, TypeVar, Union, Optional, Callable, Type, Tuple
+from typing import Iterator
 
 
 if sys.version_info < (3, 12):
@@ -21,12 +20,9 @@ if sys.version_info < (3, 12):
 else:
     import tarfile
 
-PathLike = Union[str, os.PathLike]
-T = TypeVar('T')
-
 
 @contextlib.contextmanager
-def pushd(dir: PathLike) -> Iterator[PathLike]:
+def pushd(dir: str | os.PathLike) -> Iterator[str | os.PathLike]:
     """
     >>> tmp_path = getfixture('tmp_path')
     >>> with pushd(tmp_path):
@@ -44,8 +40,8 @@ def pushd(dir: PathLike) -> Iterator[PathLike]:
 
 @contextlib.contextmanager
 def tarball(
-    url: str, target_dir: str | os.PathLike | None = None
-) -> Iterator[PathLike]:
+    url, target_dir: str | os.PathLike | None = None
+) -> Iterator[str | os.PathLike]:
     """
     Get a URL to a tarball, download, extract, yield, then clean up.
 
@@ -96,11 +92,7 @@ def strip_first_component(
     return member
 
 
-CM = TypeVar('CM', bound=contextlib.AbstractContextManager)
-"""Type var for context managers."""
-
-
-def _compose(*cmgrs: Callable[..., CM]) -> Callable[..., CM]:
+def _compose(*cmgrs):
     """
     Compose any number of dependent context managers into a single one.
 
@@ -159,7 +151,7 @@ def robust_remover():
 
 
 @contextlib.contextmanager
-def temp_dir(remover: Callable[[str], None] = shutil.rmtree) -> Iterator[str]:
+def temp_dir(remover=shutil.rmtree):
     """
     Create a temporary directory context. Pass a custom remover
     to override the removal behavior.
@@ -181,10 +173,7 @@ robust_temp_dir = functools.partial(temp_dir, remover=robust_remover())
 
 @contextlib.contextmanager
 def repo_context(
-    url,
-    branch: str | None = None,
-    quiet: bool = True,
-    dest_ctx: Callable[[], contextlib.AbstractContextManager[str]] = robust_temp_dir,
+    url, branch: str | None = None, quiet: bool = True, dest_ctx=robust_temp_dir
 ):
     """
     Check out the repo indicated by url.
@@ -207,7 +196,7 @@ def repo_context(
         yield repo_dir
 
 
-class ExceptionTrap(contextlib.AbstractContextManager):
+class ExceptionTrap:
     """
     A context manager that will catch certain exceptions and provide an
     indication they occurred.
@@ -241,13 +230,9 @@ class ExceptionTrap(contextlib.AbstractContextManager):
     False
     """
 
-    exc_info: Tuple[
-        Optional[Type[BaseException]],
-        Optional[BaseException],
-        Optional[types.TracebackType],
-    ] = (None, None, None)  # Explicitly type the tuple
+    exc_info = None, None, None
 
-    def __init__(self, exceptions: Tuple[Type[BaseException], ...] = (Exception,)):
+    def __init__(self, exceptions=(Exception,)):
         self.exceptions = exceptions
 
     def __enter__(self):
@@ -275,9 +260,7 @@ class ExceptionTrap(contextlib.AbstractContextManager):
     def __bool__(self):
         return bool(self.type)
 
-    def raises(
-        self, func: Callable[..., T], *, _test: Callable[[ExceptionTrap], bool] = bool
-    ):
+    def raises(self, func, *, _test=bool):
         """
         Wrap func and replace the result with the truth
         value of the trap (True if an exception occurred).
@@ -304,7 +287,7 @@ class ExceptionTrap(contextlib.AbstractContextManager):
 
         return wrapper
 
-    def passes(self, func: Callable[..., T]) -> Callable[..., bool]:
+    def passes(self, func):
         """
         Wrap func and replace the result with the truth
         value of the trap (True if no exception).
