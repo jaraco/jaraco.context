@@ -1,3 +1,12 @@
+v6.0.1
+======
+
+Bugfixes
+--------
+
+- Removed type declarations as suggested by Gemini. (#13)
+
+
 v6.0.0
 ======
 
