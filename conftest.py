@@ -1,20 +1,24 @@
+from __future__ import annotations
+
+import functools
 import http.server
 import io
-import functools
 import tarfile
 import threading
+from pathlib import Path
+from typing import Generator
 
 import portend
 import pytest
 
 
 class QuietHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
-    def log_message(self, format, *args):
+    def log_message(self, format: object, *args: object) -> None:
         pass
 
 
 @pytest.fixture
-def tarfile_served(tmp_path_factory):
+def tarfile_served(tmp_path_factory: pytest.TempPathFactory) -> Generator[str]:
     """
     Start an HTTP server serving a tarfile.
     """
@@ -29,9 +33,9 @@ def tarfile_served(tmp_path_factory):
         yield url + '/served.tgz'
 
 
-def start_server(path):
+def start_server(path: Path) -> tuple[http.server.HTTPServer, str]:
     _host, port = addr = ('', portend.find_available_local_port())
-    Handler = functools.partial(QuietHTTPRequestHandler, directory=path)
+    Handler = functools.partial(QuietHTTPRequestHandler, directory=path)  # type: ignore[arg-type] # python/typeshed#13477
     httpd = http.server.HTTPServer(addr, Handler)
     threading.Thread(target=httpd.serve_forever, daemon=True).start()
     return httpd, f'http://localhost:{port}'
