@@ -12,8 +12,7 @@ import subprocess
 import sys
 import tempfile
 import urllib.request
-from typing import Iterator
-
+from collections.abc import Iterator
 
 if sys.version_info < (3, 12):
     from backports import tarfile

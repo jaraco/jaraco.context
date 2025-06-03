@@ -1,6 +1,6 @@
+import functools
 import http.server
 import io
-import functools
 import tarfile
 import threading
 
