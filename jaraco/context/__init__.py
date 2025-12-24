@@ -180,6 +180,8 @@ def repo_context(
     If dest_ctx is supplied, it should be a context manager
     to yield the target directory for the check out.
 
+    >>> getfixture('ensure_git')
+    >>> getfixture('needs_internet')
     >>> repo = repo_context('https://github.com/jaraco/jaraco.context')
     >>> with repo as dest:
     ...     listing = os.listdir(dest)

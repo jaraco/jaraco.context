@@ -36,6 +36,7 @@ test = [
 	"pytest >= 6, != 8.1.*",
 
 	# local
+	"jaraco.test >= 5.6.0",
 	"portend",
 ]
 
