@@ -34,10 +34,6 @@ link_files = {
 nitpicky = True
 nitpick_ignore: list[tuple[str, str]] = []
 
-nitpick_ignore = [
-    ('py:class', 'contextlib.suppress'),
-    ('py:class', 'jaraco.context.T'),
-]
 
 # Include Python intersphinx mapping to prevent failures
 # jaraco/skeleton#51
@@ -62,3 +58,19 @@ extensions += ['sphinx.ext.extlinks']
 # local
 
 extensions += ['jaraco.tidelift']
+
+nitpick_ignore = [
+    ('py:class', 'OptExcInfo'),
+    ('py:class', 'StrPath'),
+    ('py:class', '_FileDescriptorOrPathT'),
+    ('py:class', '_P'),
+    ('py:class', '_P.args'),
+    ('py:class', '_P.kwargs'),
+    ('py:class', '_R'),
+    ('py:class', '_T2_co'),
+    ('py:class', 'contextlib.suppress'),
+    ('py:class', 'functools._Wrapped'),
+    ('py:class', 'jaraco.context.T'),
+    ('py:class', 'jaraco.context._T2_co'),
+    ('py:class', 'shutil._RmtreeType'),
+]
