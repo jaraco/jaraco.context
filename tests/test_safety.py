@@ -1,9 +1,9 @@
-import tarfile
 import io
 import os
-import sys
 import shutil
+import tarfile
 import tempfile
+
 from setuptools._vendor.jaraco.context import strip_first_component
 
 
@@ -74,7 +74,7 @@ def exploit_zipslip():
                     # Extract to target directory
                     try:
                         tf.extract(processed_member, path=target_dir)
-                        print(f"    ✓ Extracted successfully")
+                        print("    ✓ Extracted successfully")
                     except (PermissionError, FileNotFoundError) as e:
                         print(f"    ! {type(e).__name__}: Path traversal ATTEMPTED")
         except Exception as e:
@@ -101,7 +101,7 @@ def exploit_zipslip():
                     except:
                         print(f"{subindent}{file} (binary)")
         else:
-            print(f"[!] Target directory not found!")
+            print("[!] Target directory not found!")
 
         print()
         print("[*] Checking for traversal attempts...")
