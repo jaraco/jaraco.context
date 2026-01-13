@@ -1,4 +1,5 @@
 import io
+import sys
 import types
 from contextlib import nullcontext as does_not_raise
 
@@ -26,9 +27,15 @@ cases = [
         path='dummy_dir/legitimate_file.txt',
         expect=does_not_raise(),
     ),
-    types.SimpleNamespace(
-        path='dummy_dir/subdir/../legitimate_file.txt',
-        expect=does_not_raise(),
+    pytest.param(
+        types.SimpleNamespace(
+            path='dummy_dir/subdir/../legitimate_file.txt',
+            expect=does_not_raise(),
+        ),
+        marks=pytest.mark.skipif(
+            (3, 11) < sys.version_info < (3, 13),
+            reason='Fails with FileExistsError on Python 3.12',
+        ),
     ),
     types.SimpleNamespace(
         path='dummy_dir/../../tmp/pwned_by_zipslip.txt',
