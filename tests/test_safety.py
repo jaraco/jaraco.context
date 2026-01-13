@@ -27,6 +27,10 @@ cases = [
         expect=does_not_raise(),
     ),
     types.SimpleNamespace(
+        path='dummy_dir/subdir/../legitimate_file.txt',
+        expect=does_not_raise(),
+    ),
+    types.SimpleNamespace(
         path='dummy_dir/../../tmp/pwned_by_zipslip.txt',
         expect=pytest.raises(tarfile.OutsideDestinationError),
     ),
