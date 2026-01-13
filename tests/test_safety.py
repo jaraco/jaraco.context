@@ -56,5 +56,5 @@ def test_zipslip_exploit(tmp_path, tarfile_case):
     """
     (member,) = tarfile_case.tarfile
     with tarfile_case.expect:
-        processed_member = jaraco.context.strip_first_component(member, tmp_path)
+        processed_member = jaraco.context._default_filter(member, tmp_path)
         # tarfile_case.extract(processed_member, path=tmp_path)
