@@ -243,7 +243,7 @@ def repo_context(
     exe = 'git' if 'git' in url else 'hg'
     with dest_ctx() as repo_dir:
         cmd = [exe, 'clone', url, repo_dir]
-        cmd.extend(['--branch', branch] if branch else [])
+        cmd.extend(['--branch', branch] * bool(branch))  # type: ignore[list-item]
         stream = subprocess.DEVNULL if quiet else None
         subprocess.check_call(cmd, stdout=stream, stderr=stream)
         yield repo_dir
