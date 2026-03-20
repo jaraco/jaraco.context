@@ -35,7 +35,7 @@ cases = [
             expect=does_not_raise(),
         ),
         marks=pytest.mark.skipif(
-            (3, 11) < sys.version_info < (3, 13),
+            (3, 12) <= sys.version_info < (3, 13),
             reason='Fails with FileExistsError on Python 3.12',
         ),
     ),
