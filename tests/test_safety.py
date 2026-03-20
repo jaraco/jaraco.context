@@ -1,3 +1,5 @@
+# type: ignore
+
 import io
 import sys
 import types
