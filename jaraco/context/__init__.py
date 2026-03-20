@@ -19,7 +19,6 @@ from typing import (
     TYPE_CHECKING,
     Literal,
     TypeVar,
-    Union,
     cast,
 )
 
@@ -30,8 +29,10 @@ else:
     from backports import tarfile
 
 if TYPE_CHECKING:
+    from typing import TypeAlias
+
     from _typeshed import FileDescriptorOrPath, OptExcInfo, StrPath
-    from typing_extensions import ParamSpec, Self, TypeAlias, Unpack
+    from typing_extensions import ParamSpec, Self, Unpack
 
     _FileDescriptorOrPathT = TypeVar(
         "_FileDescriptorOrPathT", bound=FileDescriptorOrPath
@@ -39,9 +40,9 @@ if TYPE_CHECKING:
     _P = ParamSpec("_P")
 
 _UnpackableOptExcInfo: TypeAlias = tuple[
-    Union[type[BaseException], None],
-    Union[BaseException, None],
-    Union[TracebackType, None],
+    type[BaseException] | None,
+    BaseException | None,
+    TracebackType | None,
 ]
 _R = TypeVar("_R")
 _T1_co = TypeVar("_T1_co", covariant=True)
