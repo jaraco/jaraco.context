@@ -110,8 +110,8 @@ def tarball(url: str, target_dir: StrPath | None = None) -> Iterator[StrPath]:
         shutil.rmtree(target_dir)
 
 
-def _compose_tarfile_filters(*filters):
-    def compose_two(f1, f2):
+def _compose_tarfile_filters(*filters):  # type: ignore[no-untyped-def]
+    def compose_two(f1, f2):  # type: ignore[no-untyped-def]
         return lambda member, path: f1(f2(member, path), path)
 
     return functools.reduce(compose_two, filters, lambda member, path: member)
@@ -125,7 +125,7 @@ def strip_first_component(
     return member
 
 
-_default_filter = _compose_tarfile_filters(tarfile.data_filter, strip_first_component)
+_default_filter = _compose_tarfile_filters(tarfile.data_filter, strip_first_component)  # type: ignore[no-untyped-call]
 
 
 def _compose(
