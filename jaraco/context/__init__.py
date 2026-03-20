@@ -24,9 +24,9 @@ from typing import (
 
 # jaraco/backports.tarfile#1
 if TYPE_CHECKING or sys.version_info >= (3, 12):
-    import tarfile
+    import tarfile  # pragma: no cover
 else:
-    from backports import tarfile
+    from backports import tarfile  # pragma: no cover
 
 if TYPE_CHECKING:
     from typing import TypeAlias
