@@ -18,6 +18,7 @@ from types import TracebackType
 from typing import (
     TYPE_CHECKING,
     Literal,
+    TypeAlias,
     TypeVar,
     cast,
 )
@@ -29,10 +30,10 @@ else:
     from backports import tarfile  # pragma: no cover
 
 if TYPE_CHECKING:
-    from typing import TypeAlias
+    from typing import ParamSpec
 
     from _typeshed import FileDescriptorOrPath, OptExcInfo, StrPath
-    from typing_extensions import ParamSpec, Self, Unpack
+    from typing_extensions import Self, Unpack
 
     _FileDescriptorOrPathT = TypeVar(
         "_FileDescriptorOrPathT", bound=FileDescriptorOrPath
