@@ -1,3 +1,18 @@
+v6.1.1
+======
+
+No significant changes.
+
+
+v6.1.0
+======
+
+Features
+--------
+
+- In tarfile.context, ensure that the default filter honors the data filter to avoid path traversal vulnerabilities.
+
+
 v6.0.2
 ======
 
