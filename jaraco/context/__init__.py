@@ -31,12 +31,9 @@ else:
 if TYPE_CHECKING:
     from typing import TypeAlias
 
-    from _typeshed import FileDescriptorOrPath, OptExcInfo, StrPath
+    from _typeshed import OptExcInfo, StrOrBytesPath, StrPath
     from typing_extensions import ParamSpec, Self, Unpack
 
-    _FileDescriptorOrPathT = TypeVar(
-        "_FileDescriptorOrPathT", bound=FileDescriptorOrPath
-    )
     _P = ParamSpec("_P")
 
 _UnpackableOptExcInfo: TypeAlias = tuple[
@@ -180,8 +177,8 @@ A tarball context with the current working directory pointing to the contents.
 
 
 def remove_readonly(
-    func: Callable[[_FileDescriptorOrPathT], object],
-    path: _FileDescriptorOrPathT,
+    func: Callable[[StrOrBytesPath], object],
+    path: StrOrBytesPath,
     exc_info: tuple[object, OSError, object],
 ) -> None:
     """
