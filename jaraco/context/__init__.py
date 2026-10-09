@@ -102,8 +102,10 @@ def tarball(url: str, target_dir: StrPath | None = None) -> Iterator[StrPath]:
         target_dir = os.path.basename(url).replace('.tar.gz', '').replace('.tgz', '')
     os.mkdir(target_dir)
     try:
-        req = urllib.request.urlopen(url)
-        with tarfile.open(fileobj=req, mode='r|*') as tf:
+        with (
+            urllib.request.urlopen(url) as req,
+            tarfile.open(fileobj=req, mode='r|*') as tf,
+        ):
             tf.extractall(path=target_dir, filter=_default_filter)
         yield target_dir
     finally:
