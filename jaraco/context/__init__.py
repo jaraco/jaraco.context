@@ -188,7 +188,9 @@ def remove_readonly(
     Add support for removing read-only files on Windows.
     """
     _, exc, _ = exc_info
-    if func in (os.rmdir, os.remove, os.unlink) and exc.errno == errno.EACCES:
+    # annotated to avoid narrowing func to the removers' signatures
+    removers: tuple[Callable[..., object], ...] = (os.rmdir, os.remove, os.unlink)
+    if func in removers and exc.errno == errno.EACCES:
         # change the file to be readable,writable,executable: 0777
         os.chmod(path, stat.S_IRWXU | stat.S_IRWXG | stat.S_IRWXO)
         # retry
