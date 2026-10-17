@@ -8,9 +8,9 @@ import pytest
 from jaraco.context import tarball
 
 if TYPE_CHECKING or sys.version_info >= (3, 12):
-    import tarfile
+    import tarfile  # pragma: no cover
 else:
-    from backports import tarfile
+    from backports import tarfile  # pragma: no cover
 
 
 @pytest.mark.parametrize('filename', ['data.txt', 'nested/data.txt'])
@@ -86,6 +86,6 @@ def test_tarball_rejects_unsafe_hardlinks(
 
     target = tmp_path / 'extracted'
     with pytest.raises(error), tarball(archive.as_uri(), target):
-        pytest.fail('unsafe hard link was extracted')
+        pytest.fail('unsafe hard link was extracted')  # pragma: no cover
     assert not target.exists()
     assert not (tmp_path / 'outside.txt').exists()
