@@ -194,7 +194,8 @@ def remove_readonly(
         # retry
         func(path)
     else:
-        raise
+        # shutil.rmtree invokes the handler during exception handling
+        raise  # noqa: PLE0704
 
 
 def robust_remover() -> Callable[..., None]:

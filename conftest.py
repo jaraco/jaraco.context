@@ -24,10 +24,9 @@ def tarfile_served(tmp_path_factory: pytest.TempPathFactory) -> Generator[str]:
     """
     tmp_path = tmp_path_factory.mktemp('www')
     fn = tmp_path / 'served.tgz'
-    tf = tarfile.open(fn, mode='w:gz')
-    info = tarfile.TarInfo('served/contents.txt')
-    tf.addfile(info, io.BytesIO('hello, contents'.encode()))
-    tf.close()
+    with tarfile.open(fn, mode='w:gz') as tf:
+        info = tarfile.TarInfo('served/contents.txt')
+        tf.addfile(info, io.BytesIO(b'hello, contents'))
     httpd, url = start_server(tmp_path)
     with httpd:
         yield url + '/served.tgz'
