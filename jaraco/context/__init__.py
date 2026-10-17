@@ -122,6 +122,10 @@ def strip_first_component(
     path: object,
 ) -> tarfile.TarInfo:
     _, member.name = member.name.split('/', 1)
+    # Hard link targets are relative to the archive root, unlike symlink targets.
+    # Leave absolute targets for data_filter to reject.
+    if member.islnk() and not os.path.isabs(member.linkname):
+        member.linkname = member.linkname.split('/', 1)[-1]
     return member
 
 
