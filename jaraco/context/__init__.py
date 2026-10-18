@@ -303,6 +303,7 @@ class ExceptionTrap:
         self.exceptions = exceptions
 
     def __enter__(self) -> Self:
+        self.exc_info = None, None, None
         return self
 
     @property
