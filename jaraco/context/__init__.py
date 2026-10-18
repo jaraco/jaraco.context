@@ -112,7 +112,11 @@ def tarball(url: str, target_dir: StrPath | None = None) -> Iterator[StrPath]:
 
 def _compose_tarfile_filters(*filters):  # type: ignore[no-untyped-def]
     def compose_two(f1, f2):  # type: ignore[no-untyped-def]
-        return lambda member, path: f1(f2(member, path), path)
+        def composed(member, path):  # type: ignore[no-untyped-def]
+            filtered = f2(member, path)
+            return None if filtered is None else f1(filtered, path)
+
+        return composed
 
     return functools.reduce(compose_two, filters, lambda member, path: member)
 
@@ -120,8 +124,11 @@ def _compose_tarfile_filters(*filters):  # type: ignore[no-untyped-def]
 def strip_first_component(
     member: tarfile.TarInfo,
     path: object,
-) -> tarfile.TarInfo:
-    _, member.name = member.name.split('/', 1)
+) -> tarfile.TarInfo | None:
+    _, separator, name = member.name.partition('/')
+    if not separator:
+        return None
+    member.name = name
     return member
 
 
