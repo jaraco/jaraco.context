@@ -384,7 +384,7 @@ class suppress(contextlib.suppress, contextlib.ContextDecorator):
 
 class on_interrupt(contextlib.ContextDecorator):
     """
-    Replace a KeyboardInterrupt with SystemExit(1).
+    Replace a KeyboardInterrupt, including subclasses, with SystemExit(1).
 
     Useful in conjunction with console entry point functions.
 
@@ -418,7 +418,11 @@ class on_interrupt(contextlib.ContextDecorator):
         excinst: BaseException | None,
         exctb: TracebackType | None,
     ) -> None | bool:
-        if exctype is not KeyboardInterrupt or self.action == 'ignore':
+        if (
+            exctype is None
+            or not issubclass(exctype, KeyboardInterrupt)
+            or self.action == 'ignore'
+        ):
             return None
         elif self.action == 'error':
             raise SystemExit(self.code) from excinst
